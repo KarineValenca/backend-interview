@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gustvision/backend-interview/pkg/account"
 	"github.com/gustvision/backend-interview/pkg/user"
 	"github.com/gustvision/backend-interview/pkg/user/dto"
 	"github.com/rs/zerolog/log"
 )
+
+type userAccounts func(account.Account) error
 
 func (h *handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -33,7 +36,18 @@ func (h *handler) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	// # Compute user total
 	var total float64
-	_ = total
+	var ua userAccounts
+	ua = func(a account.Account) error {
+		total += a.Total
+		//TODO: improve err handling
+		return nil
+	}
+	//TODO: add error handling
+	err = h.account.FetchMany(ctx, account.Filter{UserID: req.ID}, ua)
+	if err != nil {
+		logger.Error().Err(err).Msg("failed to fetch user accounts")
+		http.Error(w, "failed to fetch user accounts", http.StatusInternalServerError)
+	}
 
 	// #Marshal results.
 	raw, err := json.Marshal(dto.GetUserResp{

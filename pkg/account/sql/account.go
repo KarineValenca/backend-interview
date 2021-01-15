@@ -26,12 +26,12 @@ func (s *Store) Fetch(ctx context.Context, f account.Filter) (account.Account, e
 		return account.Account{}, err
 	}
 
-	return a, row.Err()
+	return a, nil
 }
 
 func (s *Store) FetchMany(ctx context.Context, f account.Filter, callback func(account.Account) error) error {
 	b := strings.Builder{}
-	b.WriteString(`SELECT id, user_id `)
+	b.WriteString(`SELECT id, user_id, total `)
 	b.WriteString(`FROM account `)
 	b.WriteString(`WHERE user_id = $1 ;`)
 
@@ -50,6 +50,7 @@ func (s *Store) FetchMany(ctx context.Context, f account.Filter, callback func(a
 		if err := rows.Scan(
 			&a.ID,
 			&a.UserID,
+			&a.Total,
 		); err != nil {
 			return err
 		}
