@@ -2,6 +2,7 @@ package sql
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/gustvision/backend-interview/pkg/account"
@@ -9,19 +10,20 @@ import (
 
 func (s *Store) Fetch(ctx context.Context, f account.Filter) (account.Account, error) {
 	b := strings.Builder{}
-	b.WriteString(`SELECT id, user_id `)
+	b.WriteString(`SELECT id, user_id, total `)
 	b.WriteString(`FROM account `)
-	b.WriteString(`WHERE user_id = $1 ;`)
+	b.WriteString(`WHERE id = $1 ;`)
 
 	row := s.QueryRowContext(ctx, b.String(), []interface{}{
-		f.UserID,
-	})
+		f.ID,
+	}...)
 
 	var a account.Account
 
 	if err := row.Scan(
 		&a.ID,
 		&a.UserID,
+		&a.Total,
 	); err != nil {
 		return account.Account{}, err
 	}
@@ -61,4 +63,21 @@ func (s *Store) FetchMany(ctx context.Context, f account.Filter, callback func(a
 	}
 
 	return rows.Err()
+}
+
+func (s *Store) UpdateAccountTotal(ctx context.Context, f account.Filter) error {
+	fmt.Println("updating total", f.Total)
+	b := strings.Builder{}
+	b.WriteString(`UPDATE account `)
+	b.WriteString(`SET total = $1 `)
+	b.WriteString(`WHERE id = $2 ;`)
+
+	if _, err := s.ExecContext(ctx, b.String(), []interface{}{
+		f.Total,
+		f.ID,
+	}...); err != nil {
+		return err
+	}
+
+	return nil
 }

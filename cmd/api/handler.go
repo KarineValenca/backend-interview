@@ -14,6 +14,7 @@ type handler struct {
 
 func (h handler) listen(host string) error {
 	http.HandleFunc("/user", h.GetUser)
+	http.HandleFunc("/create_transaction", h.CreateTransaction)
 
 	if err := http.ListenAndServe(host, nil); err != nil {
 		return err
