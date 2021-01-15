@@ -42,7 +42,7 @@ func (h *handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		//TODO: improve err handling
 		return nil
 	}
-	//TODO: add error handling
+
 	err = h.account.FetchMany(ctx, account.Filter{UserID: req.ID}, ua)
 	if err != nil {
 		logger.Error().Err(err).Msg("failed to fetch user accounts")
