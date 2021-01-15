@@ -3,7 +3,6 @@ package main
 import (
 	//"encoding/json"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gustvision/backend-interview/pkg/account"
@@ -18,7 +17,6 @@ func (h *handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 
 	var t account.Transaction
 
-	//TODO: improve the validation
 	if err := json.NewDecoder(r.Body).Decode(&t); err != nil || t.ID == "" || t.AccountID == "" || t.Amount < 0 || t.CreatedAt < 0 {
 		logger.Error().Err(err).Msg("invalid payload")
 		http.Error(w, "invalid payload", http.StatusBadRequest)
@@ -28,7 +26,6 @@ func (h *handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 
 	// # Verify if account exists
 	a, err := h.account.Fetch(ctx, account.Filter{ID: t.AccountID})
-	fmt.Println(a)
 	if err != nil {
 		logger.Error().Err(err).Msg("failed to fetch account")
 		http.Error(w, "failed to fetch account", http.StatusInternalServerError)
@@ -46,8 +43,6 @@ func (h *handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// #Update the account total
-	fmt.Println(a.Total)
-	fmt.Println(t.Amount)
 	newTotal := a.Total - t.Amount
 	err = h.account.UpdateAccountTotal(ctx, account.Filter{ID: t.AccountID, Total: newTotal})
 	if err != nil {

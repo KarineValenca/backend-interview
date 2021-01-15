@@ -16,6 +16,7 @@ type userResponse struct {
 	Total float64 `json:"Total"`
 }
 
+// TODO: Mock Server
 func TestInvalidPayload(t *testing.T) {
 	response, err := http.Get("http://localhost:8080/user")
 
@@ -85,5 +86,5 @@ func TestGetUser(t *testing.T) {
 	assert.EqualValues(t, http.StatusOK, response.StatusCode)
 	assert.EqualValues(t, "testuid", userResponse.ID)
 	assert.EqualValues(t, "testname", userResponse.Name)
-	assert.EqualValues(t, 0, userResponse.Total)
+	assert.EqualValues(t, 89, userResponse.Total)
 }

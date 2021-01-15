@@ -14,3 +14,9 @@ INSERT INTO account (id, user_id, total) VALUES (
     'testuid',
     0
 );
+
+INSERT INTO account (id, user_id, total) VALUES (
+    'testaid2',
+    'testuid',
+    100
+);

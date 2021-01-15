@@ -2,7 +2,6 @@ package sql
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/gustvision/backend-interview/pkg/account"
@@ -66,7 +65,6 @@ func (s *Store) FetchMany(ctx context.Context, f account.Filter, callback func(a
 }
 
 func (s *Store) UpdateAccountTotal(ctx context.Context, f account.Filter) error {
-	fmt.Println("updating total", f.Total)
 	b := strings.Builder{}
 	b.WriteString(`UPDATE account `)
 	b.WriteString(`SET total = $1 `)
